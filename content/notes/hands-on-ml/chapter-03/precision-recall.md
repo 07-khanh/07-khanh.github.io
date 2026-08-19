@@ -29,3 +29,7 @@ def compute_threshold_metrics(y_true, scores):
     best_idx = np.argmax(f1_scores)
     
     return thresholds[best_idx], f1_scores[best_idx]
+```
+Note on Metric Selection: When positive classes are rare (e.g., fraud detection or tumor segmentation), always optimize for the area under the Precision-Recall curve (PR AUC) rather than the ROC AUC.
+
+By visualizing these relationships, we can choose the perfect operating point for our classifier based on business requirements.
