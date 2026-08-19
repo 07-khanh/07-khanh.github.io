@@ -1,0 +1,11 @@
+{
+  "title": "Hands-On Machine Learning with Scikit-Learn, Keras & TensorFlow",
+  "author": "Aurélien Géron",
+  "description": "My derivations, intuition, and code experiments while studying this comprehensive machine learning textbook.",
+  "chapters": [
+    { "id": 1, "slug": "chapter-01", "title": "The Machine Learning Landscape", "hasNotes": false },
+    { "id": 2, "slug": "chapter-02", "title": "End-to-End Machine Learning Project", "hasNotes": false },
+    { "id": 3, "slug": "chapter-03", "title": "Classification", "hasNotes": true },
+    { "id": 4, "slug": "chapter-04", "title": "Training Models", "hasNotes": false }
+  ]
+}
