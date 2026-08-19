@@ -1,0 +1,52 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply antialiased selection:bg-amber-200;
+  }
+}
+
+.prose {
+  @apply text-[#262626] leading-relaxed;
+}
+.prose p {
+  @apply mb-6;
+}
+.prose h1, .prose h2, .prose h3, .prose h4 {
+  @apply font-sans font-semibold tracking-tight text-gray-900 mt-10 mb-4;
+}
+.prose h1 { @apply text-3xl; }
+.prose h2 {
+  @apply text-2xl border-b border-gray-200 pb-2;
+}
+.prose h3 { @apply text-xl; }
+.prose ul { @apply list-disc list-outside ml-6 mb-6 space-y-2; }
+.prose ol { @apply list-decimal list-outside ml-6 mb-6 space-y-2; }
+.prose a { @apply text-amber-700 underline underline-offset-4 decoration-amber-200 hover:decoration-amber-500 transition-colors; }
+.prose strong { @apply font-semibold text-gray-900; }
+.prose em { @apply italic; }
+.prose hr { @apply my-10 border-gray-200; }
+.prose table { @apply w-full text-left border-collapse my-6 text-sm font-sans; }
+.prose th { @apply border-b-2 border-gray-300 py-3 px-4 font-semibold text-gray-900; }
+.prose td { @apply border-b border-gray-200 py-3 px-4; }
+.prose pre {
+  @apply rounded-lg overflow-x-auto my-6 text-sm font-mono p-4;
+  background-color: #0d1117 !important;
+}
+.prose code {
+  @apply bg-gray-100 text-amber-700 px-1.5 py-0.5 rounded text-[0.875em] font-mono;
+}
+.prose pre code {
+  @apply bg-transparent text-white p-0 text-inherit;
+}
+.prose img {
+  @apply rounded-xl mx-auto my-8 border border-gray-200 shadow-sm max-w-full h-auto;
+}
+.prose blockquote {
+  @apply border-l-4 border-amber-500 pl-4 italic text-gray-600 my-6;
+}
+.katex-display {
+  @apply overflow-x-auto overflow-y-hidden py-4 text-center my-6;
+}
