@@ -48,5 +48,13 @@
   @apply border-l-4 border-amber-500 pl-4 italic text-gray-600 my-6;
 }
 .prose .katex-display {
-  @apply flex justify-center bg-white border border-gray-200 shadow-sm rounded-xl py-6 px-4 my-8 overflow-x-auto;
+  display: block !important;
+  text-align: center !important;
+  background-color: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+  box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05) !important;
+  border-radius: 0.75rem !important;
+  padding: 1.5rem 1rem !important;
+  margin: 2rem 0 !important;
+  overflow-x: auto !important;
 }
