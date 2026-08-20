@@ -47,6 +47,6 @@
 .prose blockquote {
   @apply border-l-4 border-amber-500 pl-4 italic text-gray-600 my-6;
 }
-.katex-display {
-  @apply overflow-x-auto overflow-y-hidden py-4 text-center my-6;
+.prose .katex-display {
+  @apply flex justify-center bg-white border border-gray-200 shadow-sm rounded-xl py-6 px-4 my-8 overflow-x-auto;
 }
