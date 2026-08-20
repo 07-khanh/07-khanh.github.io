@@ -18,10 +18,14 @@ description: "My personal handwritten notes covering the full end-to-end ML proj
 
 **Select Performance Measure**
 * Typical choice for regression model: Root Mean Square Error (RMSE).
+  
 $$ \text{RMSE}(\mathbf{X}, h) = \sqrt{\frac{1}{m} \sum_{i=1}^{m} \left( h(\mathbf{x}^{(i)}) - y^{(i)} \right)^2} $$
+
 * $\text{RMSE}(\mathbf{X}, h)$ penalizes heavily large errors, using the $l_2$ (Euclidean) Norm.
-* Also have other functions, e.g., Mean Absolute Error (MAE). 
+* Also have other functions, e.g., Mean Absolute Error (MAE).
+  
 $$ \text{MAE}(\mathbf{X}, h) = \frac{1}{m} \sum_{i=1}^{m} \left| h(\mathbf{x}^{(i)}) - y^{(i)} \right| $$
+
 * $\text{MAE}(\mathbf{X}, h)$ is less sensitive to outliers, using the $l_1$ (Manhattan) Norm.
 * The higher the norm index, the more focus on large errors.
 
