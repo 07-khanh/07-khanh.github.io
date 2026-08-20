@@ -95,12 +95,12 @@ $$
 $$
 X_{norm} = \frac{X - X_{min}}{X_{max} - X_{min}}
 $$
-    (min, max along axis=0). Use `MinMaxScaler` + min $[min, max]$. If the test set has outliers, they can be out of range. Can fix by setting `clip=True`.
+    * (min, max along axis=0). Use `MinMaxScaler` + min $[min, max]$. If the test set has outliers, they can be out of range. Can fix by setting `clip=True`.
   * **Standardization:**
 $$
 X_{std} = \frac{X - \mu}{\sigma}
 $$
-    Result has $0$ mean, standard deviation = $1$, not restricted in given range -> less affected by outliers. Use `StandardScaler`.
+    * Result has $0$ mean, standard deviation = $1$, not restricted in given range -> less affected by outliers. Use `StandardScaler`.
 * **Handling heavy tails:** When the feature distribution has a heavy tail, have to transform it to shrink the tail first before scaling.
   * If values are positive, can try raise them to a power between $0$ & $1$. If the feature has a really long, heavy tail (e.g., power law distribution), replace it with its logarithm might help.
   * Can also try bucketizing the feature, chopping the distribution into equal-sized buckets & replace each feature value with the index of the bucket it belongs to.
