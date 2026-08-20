@@ -19,12 +19,16 @@ description: "My personal handwritten notes covering the full end-to-end ML proj
 **Select Performance Measure**
 * Typical choice for regression model: Root Mean Square Error (RMSE).
   
-$$ \text{RMSE}(\mathbf{X}, h) = \sqrt{\frac{1}{m} \sum_{i=1}^{m} \left( h(\mathbf{x}^{(i)}) - y^{(i)} \right)^2} $$
+$$
+\text{RMSE}(\mathbf{X}, h) = \sqrt{\frac{1}{m} \sum_{i=1}^{m} \left( h(\mathbf{x}^{(i)}) - y^{(i)} \right)^2}
+$$
 
 * $\text{RMSE}(\mathbf{X}, h)$ penalizes heavily large errors, using the $l_2$ (Euclidean) Norm.
 * Also have other functions, e.g., Mean Absolute Error (MAE).
   
-$$ \text{MAE}(\mathbf{X}, h) = \frac{1}{m} \sum_{i=1}^{m} \left| h(\mathbf{x}^{(i)}) - y^{(i)} \right| $$
+$$
+\text{MAE}(\mathbf{X}, h) = \frac{1}{m} \sum_{i=1}^{m} \left| h(\mathbf{x}^{(i)}) - y^{(i)} \right|
+$$
 
 * $\text{MAE}(\mathbf{X}, h)$ is less sensitive to outliers, using the $l_1$ (Manhattan) Norm.
 * The higher the norm index, the more focus on large errors.
@@ -88,10 +92,14 @@ $$ \text{MAE}(\mathbf{X}, h) = \frac{1}{m} \sum_{i=1}^{m} \left| h(\mathbf{x}^{(
 **4.3) Feature Scaling & Transformation**
 * **Feature Scaling:**
   * **Min-max scaling (Normalization):** scale data into a given range $[min, max]$.
-    $$ X_{norm} = \frac{X - X_{min}}{X_{max} - X_{min}} $$
+$$
+X_{norm} = \frac{X - X_{min}}{X_{max} - X_{min}}
+$$
     (min, max along axis=0). Use `MinMaxScaler` + min $[min, max]$. If the test set has outliers, they can be out of range. Can fix by setting `clip=True`.
   * **Standardization:**
-    $$ X_{std} = \frac{X - \mu}{\sigma} $$
+$$
+X_{std} = \frac{X - \mu}{\sigma}
+$$
     Result has $0$ mean, standard deviation = $1$, not restricted in given range -> less affected by outliers. Use `StandardScaler`.
 * **Handling heavy tails:** When the feature distribution has a heavy tail, have to transform it to shrink the tail first before scaling.
   * If values are positive, can try raise them to a power between $0$ & $1$. If the feature has a really long, heavy tail (e.g., power law distribution), replace it with its logarithm might help.
@@ -99,7 +107,9 @@ $$ \text{MAE}(\mathbf{X}, h) = \frac{1}{m} \sum_{i=1}^{m} \left| h(\mathbf{x}^{(
   * For multimodal (having many modes) feature, can try bucketizing but treat bucket index as category (one-hot encoding) rules for different ranges of this feature value.
   * Another approach for multimodal feature is to add a new feature for each mode (or main ones), representing the similarities between feature values & that particular mode.
   * This measure is typically computed using a radial basis function (RBF) - any function that only depends on the distance between the input value & a fixed point:
-    $$ \phi(x, c) = \exp(-\gamma ||x - c||^2) $$
+$$
+\phi(x, c) = \exp(-\gamma ||x - c||^2)
+$$
   * Commonly used is Gaussian RBF. $\gamma$ dictates how fast the similarity measure decays. Useful if this particular group is well correlated with the target.
 * Sometimes, we also may want to scale the target -> use `TransformedTargetRegressor` for combined transform & inverse transform.
 
