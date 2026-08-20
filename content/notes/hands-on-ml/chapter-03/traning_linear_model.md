@@ -12,27 +12,37 @@ description: "My personal handwritten notes covering linear regression, gradient
 
 * A linear model makes a prediction by computing a weighted sum of input features, plus a constant called the bias term (intercept term).
 
-$$ \hat{y} = \theta_0 + \theta_1 x_1 + \theta_2 x_2 + \dots + \theta_n x_n $$
+$$
+\hat{y} = \theta_0 + \theta_1 x_1 + \theta_2 x_2 + \dots + \theta_n x_n
+$$
 
 * The formula can be written in vectorized form:
 
-$$ \hat{y} = h_\theta(\mathbf{x}) = \theta \cdot \mathbf{x} $$
+$$
+\hat{y} = h_\theta(\mathbf{x}) = \theta \cdot \mathbf{x}
+$$
 
 where $\hat{y}$ is a scalar value and $\theta \cdot \mathbf{x}$ is the dot product.
 
 Note: In ML, vectors are often written as column vectors. If $\vec{\theta}$ & $\vec{x}$ are column vectors (with $x_0 = 1$ as the dummy feature), then the prediction is:
 
-$$ \hat{y} = \theta^T x $$
+$$
+\hat{y} = \theta^T x
+$$
 
 This is a single-cell matrix resulting from a matrix multiplication. In matrix form for the whole dataset:
 
-$$ \hat{y} = X\theta $$
+$$
+\hat{y} = X\theta
+$$
 
 where $X \in \mathbb{R}^{m \times (n+1)}$, $\theta \in \mathbb{R}^{n+1}$, $\hat{y} \in \mathbb{R}^m$. In this note, I will use this notation.
 
 * To train, we can use RMSE, or rather MSE for simplicity, as it gives the same result.
 
-$$ \text{MSE}(X, y, h_\theta) = \frac{1}{m} \sum_{i=1}^{m} \left( \theta^T x^{(i)} - y^{(i)} \right)^2 = \frac{1}{m} \| X\theta - y \|^2 $$
+$$
+\text{MSE}(X, y, h_\theta) = \frac{1}{m} \sum_{i=1}^{m} \left( \theta^T x^{(i)} - y^{(i)} \right)^2 = \frac{1}{m} \| X\theta - y \|^2
+$$
 
 Note:
 * Often, we use a different loss function during training than the performance measure used to evaluate the final model. This is because the one used in training is simpler & has extra terms like regularization.
@@ -43,39 +53,59 @@ Note:
 
 * The normal equation is a closed-form solution to find the value of $\theta$ that minimizes the MSE.
 
-$$ \hat{\theta} = (X^T X)^{-1} X^T y $$
+$$
+\hat{\theta} = (X^T X)^{-1} X^T y
+$$
 
 where $\hat{\theta}$ is the value of $\theta$ that minimizes the cost function, and $y$ is the vector of target values containing $y^{(1)}$ to $y^{(m)}$.
 
 **Proof:** We define the cost function $J(\theta)$ as the squared $l_2$ norm of the error vector.
 
-$$ J(\theta) = \frac{1}{2} \| X\theta - y \|^2 \quad \text{(differs from MSE by a constant } \frac{2}{m}\text{)} $$
+$$
+J(\theta) = \frac{1}{2} \| X\theta - y \|^2 \quad \text{(differs from MSE by a constant } \frac{2}{m}\text{)}
+$$
 
-$$ = \frac{1}{2} (X\theta - y)^T (X\theta - y) $$
+$$
+= \frac{1}{2} (X\theta - y)^T (X\theta - y)
+$$
 
-$$ = \frac{1}{2} (\theta^T X^T - y^T)(X\theta - y) $$
+$$
+= \frac{1}{2} (\theta^T X^T - y^T)(X\theta - y)
+$$
 
-$$ = \frac{1}{2} \left( \theta^T X^T X \theta - \theta^T X^T y - y^T X \theta + y^T y \right) $$
+$$
+= \frac{1}{2} \left( \theta^T X^T X \theta - \theta^T X^T y - y^T X \theta + y^T y \right)
+$$
 
 As $\theta^T X^T y$ is a scalar & the transpose of a scalar is equal to itself:
 
-$$ \theta^T X^T y = (\theta^T X^T y)^T = y^T X \theta $$
+$$
+\theta^T X^T y = (\theta^T X^T y)^T = y^T X \theta
+$$
 
 Combine those two (symmetric) terms:
 
-$$ J(\theta) = \frac{1}{2} \theta^T X^T X \theta - \theta^T X^T y + \frac{1}{2} y^T y $$
+$$
+J(\theta) = \frac{1}{2} \theta^T X^T X \theta - \theta^T X^T y + \frac{1}{2} y^T y
+$$
 
 To find the minimum, we find $\nabla_\theta J(\theta)$:
 
-$$ \nabla_\theta J(\theta) = X^T X \theta - X^T y $$
+$$
+\nabla_\theta J(\theta) = X^T X \theta - X^T y
+$$
 
 Set $\nabla_\theta J(\theta) = 0$:
 
-$$ X^T X \theta = X^T y \implies \theta = (X^T X)^{-1} X^T y \quad \blacksquare $$
+$$
+X^T X \theta = X^T y \implies \theta = (X^T X)^{-1} X^T y \quad \blacksquare
+$$
 
 * As $X^T X$ is not always invertible, we usually replace the normal equation with:
 
-$$ \hat{\theta} = X^{+} y $$
+$$
+\hat{\theta} = X^{+} y
+$$
 
 where $X^{+}$ is the pseudoinverse of $X$, calculated using SVD.
 
@@ -101,13 +131,17 @@ where $X^{+}$ is the pseudoinverse of $X$, calculated using SVD.
 
 #### ① Batch Gradient Descent
 
-$$ \nabla_\theta \text{MSE}(\theta) = \begin{pmatrix} \frac{\partial}{\partial \theta_0} \text{MSE}(\theta) \\ \vdots \\ \frac{\partial}{\partial \theta_n} \text{MSE}(\theta) \end{pmatrix} = \frac{2}{m} X^T (X\theta - y) $$
+$$
+\nabla_\theta \text{MSE}(\theta) = \begin{pmatrix} \frac{\partial}{\partial \theta_0} \text{MSE}(\theta) \\ \vdots \\ \frac{\partial}{\partial \theta_n} \text{MSE}(\theta) \end{pmatrix} = \frac{2}{m} X^T (X\theta - y)
+$$
 
 $\Rightarrow$ Uses the entire training set $\rightarrow$ slow for large sets but scales well with the number of features.
 
 * Gradient Descent update rule:
 
-$$ \theta^{(\text{next step})} = \theta - \eta \nabla_\theta \text{MSE}(\theta) $$
+$$
+\theta^{(\text{next step})} = \theta - \eta \nabla_\theta \text{MSE}(\theta)
+$$
 
 * Can find a good learning rate $\eta$ using grid search... & limit the number of epochs.
 * Find a good number of epochs by setting a very large number of epochs but interrupting the algorithm when the gradient vector becomes tiny — its norm $<\ \epsilon$ (tolerance).
@@ -150,7 +184,9 @@ $$ \theta^{(\text{next step})} = \theta - \eta \nabla_\theta \text{MSE}(\theta) 
 
 * A model's generalization error can be expressed as the sum of three very different errors:
 
-$$ E\left[(y_0 - h(x_0))^2\right] = \underbrace{\text{Var}(h(x_0)) + \text{Bias}(h(x_0))^2}_{\text{reducible}} + \underbrace{\text{Var}(\epsilon)}_{\text{irreducible}} $$
+$$
+E\left[(y_0 - h(x_0))^2\right] = \underbrace{\text{Var}(h(x_0)) + \text{Bias}(h(x_0))^2}_{\text{reducible}} + \underbrace{\text{Var}(\epsilon)}_{\text{irreducible}}
+$$
 
 * **Bias:** due to wrong assumptions, such as assuming the data is linear while it is actually quadratic. A high-bias model is most likely to underfit.
 * **Variance:** due to the model's excessive sensitivity to small variations in the training data. A model with many degrees of freedom is likely to have high variance $\rightarrow$ overfit.
@@ -172,7 +208,9 @@ Usually, as flexibility increases:
 
 #### ① Ridge Regression
 
-$$ J(\theta) = \text{MSE}(\theta) + \frac{\alpha}{m} \sum_{i=1}^{n} \theta_i^2 $$
+$$
+J(\theta) = \text{MSE}(\theta) + \frac{\alpha}{m} \sum_{i=1}^{n} \theta_i^2
+$$
 
 * $\alpha \uparrow \rightarrow$ pulls weights closer to zero.
 * The bias term $\theta_0$ is not regularized.
@@ -187,7 +225,9 @@ $$ J(\theta) = \text{MSE}(\theta) + \frac{\alpha}{m} \sum_{i=1}^{n} \theta_i^2 $
 
 #### ② Lasso Regression
 
-$$ J(\theta) = \text{MSE}(\theta) + 2\alpha \sum_{i=1}^{n} |\theta_i| $$
+$$
+J(\theta) = \text{MSE}(\theta) + 2\alpha \sum_{i=1}^{n} |\theta_i|
+$$
 
 * Uses the $l_1$ norm instead of the $l_2$ norm like in Ridge.
 * Lasso can do feature selection, as it can drive the weights of the least important features to zero.
@@ -211,7 +251,9 @@ $\Rightarrow$ Using certain algorithms, Lasso can drive some weights close to 0 
 
 * Elastic Net's regularization term is a weighted sum of both Ridge's & Lasso's regularization terms.
 
-$$ J(\theta) = \text{MSE}(\theta) + r\left(2\alpha \sum_{i=1}^{n} |\theta_i|\right) + (1-r)\left(\frac{\alpha}{m} \sum_{i=1}^{n} \theta_i^2\right) $$
+$$
+J(\theta) = \text{MSE}(\theta) + r\left(2\alpha \sum_{i=1}^{n} |\theta_i|\right) + (1-r)\left(\frac{\alpha}{m} \sum_{i=1}^{n} \theta_i^2\right)
+$$
 
 * Elastic Net tries to get the strength of both Ridge & Lasso:
   * The Ridge component discourages it from arbitrarily picking just one of several highly correlated features.
@@ -242,51 +284,75 @@ $$ J(\theta) = \text{MSE}(\theta) + r\left(2\alpha \sum_{i=1}^{n} |\theta_i|\rig
 * Logistic Regression estimates the probability that an instance belongs to a specific class. $\rightarrow$ Classification.
 * Logistic regression model estimated probability (vectorized form):
 
-$$ \hat{p} = h_\theta(\mathbf{x}) = \sigma(\theta^T x) $$
+$$
+\hat{p} = h_\theta(\mathbf{x}) = \sigma(\theta^T x)
+$$
 
 * The logistic — denoted $\sigma(\cdot)$ — is a sigmoid function that outputs a number between 0 & 1.
 
-$$ \sigma(t) = \frac{1}{1 + e^{-t}} $$
+$$
+\sigma(t) = \frac{1}{1 + e^{-t}}
+$$
 
 * Make predictions (using a 50% threshold):
 
-$$ \hat{y} = \begin{cases} 0 & \text{if } \hat{p} < 0.5 \\ 1 & \text{if } \hat{p} \ge 0.5 \end{cases} $$
+$$
+\hat{y} = \begin{cases} 0 & \text{if } \hat{p} < 0.5 \\ 1 & \text{if } \hat{p} \ge 0.5 \end{cases}
+$$
 
 * $t$ is also called logits.
 * The sigmoid function is the inverse of the logit function: the logit function maps $p \in [0,1] \rightarrow t \in (-\infty, +\infty)$, and the sigmoid does the opposite.
   * We have odds: the ratio of an event happening vs not happening.
 
-    $$ \text{odds} = \frac{p}{1-p} $$
+$$
+\text{odds} = \frac{p}{1-p}
+$$
 
   * Log-odds (logit function): $[0,1] \rightarrow (-\infty, +\infty)$
 
-    $$ \log\left(\frac{p}{1-p}\right) = \theta^T x = t $$
+$$
+\log\left(\frac{p}{1-p}\right) = \theta^T x = t
+$$
 
   * Invert the logit function: $(-\infty, +\infty) \mapsto [0,1]$
 
-    $$ \frac{p}{1-p} = e^t \implies p = e^t(1-p) \implies p(1+e^t) = e^t $$
+$$
+\frac{p}{1-p} = e^t \implies p = e^t(1-p) \implies p(1+e^t) = e^t
+$$
 
-    $$ \implies p = \frac{e^t}{1+e^t} = \frac{1}{1+e^{-t}} = \sigma(t) $$
+$$
+\implies p = \frac{e^t}{1+e^t} = \frac{1}{1+e^{-t}} = \sigma(t)
+$$
 
 **Training & Cost Function**
 
 * Cost function of a single instance:
 
-$$ c(\theta) = \begin{cases} -\log(\hat{p}) & \text{if } y = 1 \\ -\log(1-\hat{p}) & \text{if } y = 0 \end{cases} $$
+$$
+c(\theta) = \begin{cases} -\log(\hat{p}) & \text{if } y = 1 \\ -\log(1-\hat{p}) & \text{if } y = 0 \end{cases}
+$$
 
 Makes sense, as when $t \rightarrow 0$, $-\log(t) \rightarrow +\infty$ (and $-\log(t) \rightarrow 0$ as $t \rightarrow 1$).
 
 * Cost function for the entire set (log loss):
 
-$$ J(\theta) = -\frac{1}{m} \sum_{i=1}^{m} \left[ y^{(i)} \log(\hat{p}^{(i)}) + (1-y^{(i)}) \log(1-\hat{p}^{(i)}) \right] $$
+$$
+J(\theta) = -\frac{1}{m} \sum_{i=1}^{m} \left[ y^{(i)} \log(\hat{p}^{(i)}) + (1-y^{(i)}) \log(1-\hat{p}^{(i)}) \right]
+$$
 
-$$ = -\frac{1}{m} \left[ y^T \log(\hat{p}) + (1-y)^T \log(1-\hat{p}) \right] $$
+$$
+= -\frac{1}{m} \left[ y^T \log(\hat{p}) + (1-y)^T \log(1-\hat{p}) \right]
+$$
 
 * No closed-form solution, but the cost function is convex $\rightarrow$ GD is guaranteed to find the global minimum.
 
-$$ \frac{\partial J}{\partial \theta_j} = \frac{1}{m} \sum_{i=1}^{m} \left[ \sigma(\theta^T x^{(i)}) - y^{(i)} \right] x_j^{(i)} $$
+$$
+\frac{\partial J}{\partial \theta_j} = \frac{1}{m} \sum_{i=1}^{m} \left[ \sigma(\theta^T x^{(i)}) - y^{(i)} \right] x_j^{(i)}
+$$
 
-$$ \frac{\partial J}{\partial \theta} = \frac{1}{m} X^T \left[ \sigma(X\theta) - y \right] $$
+$$
+\frac{\partial J}{\partial \theta} = \frac{1}{m} X^T \left[ \sigma(X\theta) - y \right]
+$$
 
 **Decision Boundaries**
 
@@ -299,23 +365,31 @@ $$ \frac{\partial J}{\partial \theta} = \frac{1}{m} X^T \left[ \sigma(X\theta) -
 * Softmax Regression extends Logistic Regression to support multi-class classification.
 * First, compute the softmax score for class $k$:
 
-$$ s_k(x) = (\theta^{(k)})^T x $$
+$$
+s_k(x) = (\theta^{(k)})^T x
+$$
 
 Each class has its own parameter vector $\theta^{(k)}$. All $\theta^{(k)}$ are stored in matrix $\Theta$.
 
 * Then we have the softmax function:
 
-$$ \hat{p}_k = \sigma(s(x))_k = \frac{e^{s_k(x)}}{\sum_{j=1}^{K} e^{s_j(x)}} $$
+$$
+\hat{p}_k = \sigma(s(x))_k = \frac{e^{s_k(x)}}{\sum_{j=1}^{K} e^{s_j(x)}}
+$$
 
 where $K$ is the number of classes, and $\sigma(s(x))_k$ is the probability that $x$ belongs to class $k$, given the scores of each class for that instance $s(x)$.
 
 * Predictions:
 
-$$ \hat{y} = \operatorname*{argmax}_k \sigma(s(x))_k = \operatorname*{argmax}_k \big(s_k(x)\big) = \operatorname*{argmax}_k \big((\theta^{(k)})^T x\big) $$
+$$
+\hat{y} = \operatorname*{argmax}_k \sigma(s(x))_k = \operatorname*{argmax}_k \big(s_k(x)\big) = \operatorname*{argmax}_k \big((\theta^{(k)})^T x\big)
+$$
 
 * Cross entropy:
 
-$$ J(\Theta) = -\frac{1}{m} \sum_{i=1}^{m} \sum_{k=1}^{K} y_k^{(i)} \log(\hat{p}_k^{(i)}) $$
+$$
+J(\Theta) = -\frac{1}{m} \sum_{i=1}^{m} \sum_{k=1}^{K} y_k^{(i)} \log(\hat{p}_k^{(i)})
+$$
 
 where $y_k^{(i)} \in \{0, 1\}$ is the probability that the $i$-th instance belongs to class $k$.
 
@@ -323,7 +397,9 @@ where $y_k^{(i)} \in \{0, 1\}$ is the probability that the $i$-th instance belon
 
 * Cross entropy gradient vector for class $k$:
 
-$$ \nabla_\theta^{(k)} J(\Theta) = \frac{1}{m} \sum_{i=1}^{m} \left( \hat{p}_k^{(i)} - y_k^{(i)} \right) x^{(i)} $$
+$$
+\nabla_\theta^{(k)} J(\Theta) = \frac{1}{m} \sum_{i=1}^{m} \left( \hat{p}_k^{(i)} - y_k^{(i)} \right) x^{(i)}
+$$
 
 * `LogisticRegression` uses softmax regression automatically when there are more than 2 classes; it also has regularization controlled by $C$ (lower $C$ = more regularization).
 
