@@ -1,4 +1,4 @@
-import { getNoteBySlug, getAllNotes } from '@/lib/content';
+import { getPostBySlug, getAllNotes } from '@/lib/content';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 
