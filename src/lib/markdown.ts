@@ -6,6 +6,7 @@ import remarkRehype from 'remark-rehype';
 import rehypeKatex from 'rehype-katex';
 import rehypeStringify from 'rehype-stringify';
 import rehypeHighlight from 'rehype-highlight';
+import rehypeSlug from 'rehype-slug';
 
 export async function markdownToHtml(markdown: string) {
   const result = await unified()
@@ -13,6 +14,7 @@ export async function markdownToHtml(markdown: string) {
     .use(remarkGfm)
     .use(remarkMath)
     .use(remarkRehype)
+    .use(rehypeSlug)
     .use(rehypeKatex)
     .use(rehypeHighlight)
     .use(rehypeStringify)
