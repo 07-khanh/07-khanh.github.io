@@ -8,6 +8,6 @@
     { "id": 3, "slug": "chapter-03", "title": "Classification", "hasNotes": true },
     { "id": 4, "slug": "chapter-04", "title": "Training Models", "hasNotes": false },
     { "id": 5, "slug": "chapter-05", "title": "Decision Trees", "hasNotes": false },
-    { "id": 6, "slug": "chapter-06", "title": "Ensemble Learning and Random Forests", "hasNotes": true },
+    { "id": 6, "slug": "chapter-06", "title": "Ensemble Learning and Random Forests", "hasNotes": true }
   ]
 }
