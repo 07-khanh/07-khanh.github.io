@@ -2,15 +2,11 @@ import { getPostBySlug, getPosts } from '@/lib/content';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 
-interface PageProps {
-  params: {
-    slug: string[];
-  };
-}
-
 // Function to automatically extract headings from raw MDX text
 function extractHeadings(content: string) {
-  const headingLines = content.split('\n').filter((line) => line.match(/^#{1-3}\s+/));
+  const headingLines = content
+    .split('\n')
+    .filter((line) => line.match(/^#{1,3}\s+/));
 
   return headingLines.map((raw) => {
     const level = raw.match(/^#+/)?.[0].length || 1;
@@ -20,14 +16,15 @@ function extractHeadings(content: string) {
       .toLowerCase()
       .replace(/[^\w\s-]/g, '')
       .replace(/\s+/g, '-');
-
     return { level, text, id };
   });
 }
 
-export default async function NotePage({ params }: PageProps) {
-  const slugPath = params.slug ? params.slug.join('/') : '';
-  const note = await getNoteBySlug(slugPath);
+export default async function NotePage() {
+  // If this is the homepage showing the first note or default slug:
+  const posts = await getPosts();
+  const defaultSlug = posts[0]?.slug || 'index';
+  const note = await getPostBySlug(defaultSlug);
 
   if (!note) {
     notFound();
@@ -38,12 +35,16 @@ export default async function NotePage({ params }: PageProps) {
   return (
     <article className="prose prose-neutral max-w-none">
       <header className="mb-8 border-b border-neutral-200 pb-6">
-        <h1 className="text-3xl font-bold tracking-tight mb-2">{note.meta.title}</h1>
+        <h1 className="text-3xl font-bold tracking-tight mb-2">
+          {note.meta.title}
+        </h1>
         {note.meta.description && (
-          <p className="text-neutral-600 text-lg">{note.meta.description}</p>
+          <p className="text-neutral-600 text-lg">
+            {note.meta.description}
+          </p>
         )}
         <div className="flex gap-4 text-sm text-neutral-500 font-sans mt-4">
-          <span>{note.meta.date}</span>
+          {note.meta.date && <span>{note.meta.date}</span>}
           {note.meta.chapter && <span>Chapter {note.meta.chapter}</span>}
         </div>
       </header>
@@ -73,8 +74,8 @@ export default async function NotePage({ params }: PageProps) {
         </nav>
       )}
 
-      {/* Render Note MDX Content */}
-      <div className="mt-8">{note.component}</div>
+      {/* POST CONTENT */}
+      <div dangerouslySetInnerHTML={{ __html: note.content }} />
     </article>
   );
 }
