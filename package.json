@@ -21,7 +21,8 @@
     "rehype-highlight": "^7.0.0",
     "rehype-stringify": "^10.0.0",
     "katex": "^0.16.10",
-    "highlight.js": "^11.9.0"
+    "highlight.js": "^11.9.0",
+    "remark-gfm": "^4.0.0"
   },
   "devDependencies": {
     "typescript": "^5.4.5",
