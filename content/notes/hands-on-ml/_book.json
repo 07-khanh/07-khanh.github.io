@@ -6,6 +6,8 @@
     { "id": 1, "slug": "chapter-01", "title": "The Machine Learning Landscape", "hasNotes": false },
     { "id": 2, "slug": "chapter-02", "title": "End-to-End Machine Learning Project", "hasNotes": true },
     { "id": 3, "slug": "chapter-03", "title": "Classification", "hasNotes": true },
-    { "id": 4, "slug": "chapter-04", "title": "Training Models", "hasNotes": false }
+    { "id": 4, "slug": "chapter-04", "title": "Training Models", "hasNotes": false },
+    { "id": 5, "slug": "chapter-05", "title": "Decision Trees", "hasNotes": false },
+    { "id": 6, "slug": "chapter-06", "title": "Ensemble Learning and Random Forests", "hasNotes": true },
   ]
 }
