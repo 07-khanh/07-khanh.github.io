@@ -56,6 +56,9 @@ function normalizeHeadings(options: { minimum: number }) {
 const imageDimensions: Record<string, [number, number]> = {
   '/images/pca-variance.jpg': [1770, 848],
   '/images/principle-components.jpg': [756, 628],
+  '/images/notes/hands-on-ml/end-to-end-project/log-transform.png': [815, 190],
+  '/images/notes/hands-on-ml/end-to-end-project/gaussian-rbf.png': [430, 215],
+  '/images/notes/hands-on-ml/end-to-end-project/cross-validation.png': [720, 278],
   '/images/notes/hands-on-ml/classification/confusion-matrix.png': [1201, 643],
   '/images/notes/hands-on-ml/classification/decision-thresholds.png': [1498, 498],
   '/images/notes/hands-on-ml/classification/precision-recall-threshold.png': [1921, 921],

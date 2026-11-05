@@ -4,145 +4,219 @@ date: "2026-08-20"
 chapter: 2
 chapterTitle: "End-to-End Machine Learning Project"
 bookSlug: "hands-on-ml"
-tags: ["machine-learning", "preprocessing", "scikit-learn"]
-description: "My personal handwritten notes covering the full end-to-end ML project pipeline."
+tags: ["machine-learning", "preprocessing", "scikit-learn", "cross-validation"]
+description: "The complete ML project workflow: framing the problem, splitting and exploring data, building preprocessing pipelines, evaluating and tuning models, and monitoring deployment."
 ---
 
-### Look at the BIG PICTURE
+An end-to-end machine learning project involves much more than fitting a model. These notes follow seven stages: frame the problem, get the data, explore it, prepare it, train models, fine-tune the system, and maintain it after deployment.
 
-**2. Frame the problem**
-* What is the objective?
-* How is the current solution?
-* What kind of training supervision? (supervised, unsupervised, semi-supervised)
-* Classification / Regression...
+## 1. Look at the big picture
 
-**Select Performance Measure**
-* Typical choice for regression model: Root Mean Square Error (RMSE).
-  
+### Frame the problem
+
+Before selecting an algorithm, clarify:
+
+- **Objective:** What should the system achieve?
+- **Current solution:** How is the problem handled now, and what provides a useful baseline?
+- **Supervision:** Is the task supervised, unsupervised, or semi-supervised?
+- **Prediction task:** Is it classification, regression, or another type of problem?
+
+Check assumptions about how the downstream system will use the model's output. The intended use should guide the task definition and evaluation measure.
+
+### Select a performance measure
+
+For a regression dataset with $m$ observations, let $h(\mathbf{x}^{(i)})$ be the prediction and $y^{(i)}$ the target.
+
+**Root mean square error (RMSE)** squares the errors before averaging, so large errors receive more weight:
+
 $$
-\text{RMSE}(\mathbf{X}, h) = \sqrt{\frac{1}{m} \sum_{i=1}^{m} \left( h(\mathbf{x}^{(i)}) - y^{(i)} \right)^2}
+\operatorname{RMSE}(\mathbf{X},\mathbf{y},h)
+=\sqrt{\frac{1}{m}\sum_{i=1}^{m}
+\left(h(\mathbf{x}^{(i)})-y^{(i)}\right)^2}.
 $$
 
-* $\text{RMSE}(\mathbf{X}, h)$ penalizes heavily large errors, using the $l_2$ (Euclidean) Norm.
-* Also have other functions, e.g., Mean Absolute Error (MAE).
-  
+**Mean absolute error (MAE)** averages absolute errors and is less sensitive to extreme errors than RMSE:
+
 $$
-\text{MAE}(\mathbf{X}, h) = \frac{1}{m} \sum_{i=1}^{m} \left| h(\mathbf{x}^{(i)}) - y^{(i)} \right|
+\operatorname{MAE}(\mathbf{X},\mathbf{y},h)
+=\frac{1}{m}\sum_{i=1}^{m}
+\left|h(\mathbf{x}^{(i)})-y^{(i)}\right|.
 $$
 
-* $\text{MAE}(\mathbf{X}, h)$ is less sensitive to outliers, using the $l_1$ (Manhattan) Norm.
-* The higher the norm index, the more focus on large errors.
+For the residual vector $\mathbf{e}$, these are $\lVert\mathbf{e}\rVert_2/\sqrt{m}$ and $\lVert\mathbf{e}\rVert_1/m$, respectively. Higher-order norms put more emphasis on the largest errors.
 
-**Check the assumptions**
-* For instance, verify how the downstream system will use the model output.
+## 2. Get the data
 
----
+### Inspect the dataset
 
-### GET THE DATA
+Understand how the values were collected and computed, alongside their types and distributions.
 
-**Look at the data**
-* `info()` method is useful (attributes' names, types, non-null values...).
-* `value_counts()` look at categories of one attribute.
-* `describe()` if numerical attributes (mean, standard deviation...).
-* `hist()` on the entire dataframe, draw histograms for each numerical attribute. Should know how the values are computed.
+| Method | What it reveals |
+| --- | --- |
+| `info()` | Column names, data types, and non-null counts |
+| `value_counts()` | Frequencies of values or categories in a column |
+| `describe()` | Summary statistics such as mean, standard deviation, and quantiles |
+| `hist()` | A histogram for each numerical attribute |
 
-**Create test set (e.g., 20%)**
-* **Method 1:** Use `np.random.seed` to shuffle and select indices -> breaks when you update the dataset.
-* **Method 2:** Use the data's unique identifiers. Compute hash of the identifiers, select hash value smaller than test ratio $\times$ max hash value (as hash ensures uniform distribution).
-* **Method 3:** Scikit-Learn `train_test_split` (model selection) based on a specific trait.
-* **Stratified Sampling:** the population is divided into subgroups (strata), and the right number of instances is selected from each stratum. The test set is representative of the overall population. Random selection easily leads to bias.
-* **Method 4:** Scikit-Learn's `StratifiedShuffleSplit`. The test set's distribution (based on the category) resembles the overall population's distribution. Can do the same (proportional split) with the training set.
+### Create a test set
 
----
+Set aside a test set, for example 20% of the data, before exploring the data in depth.
 
-### EXPLORE & Visualize DATA
+- **Random split with a fixed seed:** Shuffle observations and select a subset. This is reproducible for the same input, but assignments can change when the dataset is updated or reordered.
+- **Stable identifier and hash:** Hash each observation's stable, unique identifier. Assign it to the test set when its hash falls below the test ratio times the hash range. A suitably uniform hash keeps assignments stable as new observations arrive.
+- **`train_test_split`:** A convenient way to create a random split.
+- **Stratified sampling:** Divide the population into strata and sample proportionally from each, so important groups retain their representation in the split.
 
-* Explore only on training data.
-* If training set is large, create a smaller exploration set.
-* Should make a copy of the data.
-* **Geography:** when there are longitude, latitude -> scatter plot.
-* **Look for Correlations:** 
-  * Standard Correlation Coefficient (Pearson's $r$).
-  * Calculate score using `corr()`.
-  * Using Pandas' `scatter_matrix()` function.
-* **Attribute Combination:** When creating new combined features, make sure they are not too linearly correlated with existing features (e.g., avoid doing simple weighted sum).
+Use `StratifiedShuffleSplit` for stratified random splits, or pass the stratification labels through `train_test_split(..., stratify=...)` for a single split. Small random samples can misrepresent important groups by chance; stratification controls their proportions.
 
----
+## 3. Explore and visualize the data
 
-### PREPARE DATA FOR ML ALGORITHM
-* Write in functions.
-* Make copies of the data, separate features & target.
+Explore the **training data**. Make a copy before experimenting, and use a smaller exploration subset if the training set is very large.
 
-**4.1) Clean the data**
-* **Missing values:** 3 treating options
-  1. Get rid of those samples -> `dropna()`
-  2. Drop the whole attribute -> `drop()`
-  3. Set the missing values to some value (zero, mean, median) -> `fillna()`
-* **Imputation:**
-  * For computation (least destruction), use `SimpleImputer` (`sklearn.impute`).
-  * Impute -> `IterativeImputer` more time-consuming.
-  * `KNNImputer`.
-  * Scikit-Learn also has more powerful imputers.
-* **Outliers:** may want to drop, can use `IsolationForest`.
+### Geographical data
 
-**4.2) Handling Text & Categorical Attributes**
-* **`OrdinalEncoder`:** features are converted to ordinal integers $\in [0, n_{\text{categories}} - 1]$. Having "notion of distance" -> used for categories that can be ordered (e.g., bad, neutral, good).
-* **`OneHotEncoder`:** one-hot encoding, creates new binary attributes per attribute, returns SciPy sparse matrix. If there are many categories, this creates a lot of additional columns -> slows down training. May want to replace with useful numerical features related to the categories.
+When the data includes longitude and latitude, use a scatter plot to inspect geographical patterns.
 
-**4.3) Feature Scaling & Transformation**
-* **Feature Scaling:**
-  * **Min-max scaling (Normalization):** scale data into a given range $[min, max]$.
+### Look for correlations
+
+The **standard correlation coefficient**, or **Pearson's $r$**, measures the direction and strength of a linear relationship between two numerical attributes.
+
+- Values near $+1$ indicate a strong positive linear relationship.
+- Values near $-1$ indicate a strong negative linear relationship.
+- Values near $0$ indicate little linear association; a nonlinear relationship may still exist.
+
+Calculate pairwise correlations with `corr()`. Use Pandas' `scatter_matrix()` to inspect the relationships visually rather than relying on coefficients alone.
+
+### Experiment with attribute combinations
+
+Combined attributes may expose patterns that individual features hide. Check whether a proposed feature adds useful information: a simple weighted sum of existing attributes can introduce linear redundancy.
+
+## 4. Prepare the data for machine learning
+
+Write reusable preprocessing functions and transformers. Work on copies, and separate the input features from the target.
+
+> **Avoid data leakage:** Fit preprocessing steps on the training data only. Apply the fitted transformations to validation and test data. During cross-validation, preprocessing must be fitted separately within each training fold.
+
+### Clean the data
+
+There are three basic ways to handle missing values:
+
+1. Remove observations with missing values using `dropna()`.
+2. Remove an attribute using `drop()`.
+3. Fill missing values with a constant or a statistic such as the mean or median using `fillna()` or an imputer.
+
+Scikit-Learn provides several imputers:
+
+| Transformer | Approach |
+| --- | --- |
+| `SimpleImputer` | Fill each column using a selected strategy, such as the median |
+| `KNNImputer` | Estimate missing values from neighboring observations |
+| `IterativeImputer` | Repeatedly model each feature with missing values using the other features |
+
+The latter two approaches are more computationally involved; greater complexity does not guarantee better results. Compare their effect on validation performance.
+
+Inspect outliers as well. `IsolationForest` can help identify unusual observations; investigate whether they are errors or meaningful cases before removing them.
+
+### Handle text and categorical attributes
+
+**`OrdinalEncoder`** maps categories to integers from $0$ to $n_{\text{categories}}-1$. If categories have a meaningful order, such as bad, neutral, and good, specify that order explicitly. Integer encoding can make a model treat categories as ordered or numerically spaced.
+
+**`OneHotEncoder`** creates a binary attribute for each category and can return a SciPy sparse matrix. Many categories can produce many additional columns and increase training cost. Useful numerical attributes describing the categories may provide an alternative representation.
+
+### Scale numerical features
+
+**Min-max scaling** maps a feature into a chosen range $[a,b]$ using its training minimum and maximum:
+
 $$
-X_{norm} = \frac{X - X_{min}}{X_{max} - X_{min}}
+x_{\mathrm{unit}}=\frac{x-x_{\min}}{x_{\max}-x_{\min}},
+\qquad
+x_{\mathrm{scaled}}=a+(b-a)x_{\mathrm{unit}}.
 $$
-    * (min, max along axis=0). Use `MinMaxScaler` + min $[min, max]$. If the test set has outliers, they can be out of range. Can fix by setting `clip=True`.
-  * **Standardization:**
+
+Use `MinMaxScaler`. New observations outside the training range can map outside $[a,b]$; `clip=True` clips transformed values to the selected range.
+
+**Standardization** subtracts the training mean and divides by the training standard deviation:
+
 $$
-X_{std} = \frac{X - \mu}{\sigma}
+x_{\mathrm{std}}=\frac{x-\mu}{\sigma}.
 $$
-    * Result has $0$ mean, standard deviation = $1$, not restricted in given range -> less affected by outliers. Use `StandardScaler`.
-* **Handling heavy tails:** When the feature distribution has a heavy tail, have to transform it to shrink the tail first before scaling.
-  * If values are positive, can try raise them to a power between $0$ & $1$. If the feature has a really long, heavy tail (e.g., power law distribution), replace it with its logarithm might help.
-  * Can also try bucketizing the feature, chopping the distribution into equal-sized buckets & replace each feature value with the index of the bucket it belongs to.
-  * For multimodal (having many modes) feature, can try bucketizing but treat bucket index as category (one-hot encoding) rules for different ranges of this feature value.
-  * Another approach for multimodal feature is to add a new feature for each mode (or main ones), representing the similarities between feature values & that particular mode.
-  * This measure is typically computed using a radial basis function (RBF) - any function that only depends on the distance between the input value & a fixed point:
+
+Use `StandardScaler`. A nonconstant training feature then has mean $0$ and standard deviation $1$, with no fixed output range. Standardization remains sensitive to outliers because both the mean and standard deviation are affected by them.
+
+### Transform heavy-tailed and multimodal features
+
+Scaling alone does not change a distribution's shape. For positive features with long right tails, consider a power transformation $x^p$ with $0<p<1$, or a logarithm for a very long tail.
+
+![Handwritten sketch of a long right-tailed distribution becoming more symmetric after a logarithmic transformation.](/images/notes/hands-on-ml/end-to-end-project/log-transform.png)
+
+*A log transformation can compress a long right tail; it does not guarantee a Gaussian distribution.*
+
+Another option is **bucketizing**: divide a feature's range into intervals and replace each value with its bucket index. For a multimodal feature, treating the buckets as categories and one-hot encoding them allows different behavior across ranges.
+
+Alternatively, create a similarity feature for each important mode. A **radial basis function (RBF)** depends only on distance from a fixed reference point. A Gaussian RBF has the form:
+
 $$
-\phi(x, c) = \exp(-\gamma ||x - c||^2)
+\phi(\mathbf{x},\mathbf{c})
+=\exp\!\left(-\gamma\lVert\mathbf{x}-\mathbf{c}\rVert_2^2\right),
+\qquad \gamma>0.
 $$
-  * Commonly used is Gaussian RBF. $\gamma$ dictates how fast the similarity measure decays. Useful if this particular group is well correlated with the target.
-* Sometimes, we also may want to scale the target -> use `TransformedTargetRegressor` for combined transform & inverse transform.
 
-**4.4) Custom Transformers**
-* Use `FunctionTransformer`.
-* Thanks to scikit-learn duck typing, custom classes only need to implement `fit`, `transform` and `fit_transform` (obtained for free by inheriting `TransformerMixin`).
-* Can also inherit from `BaseEstimator` for other methods.
+Here $\mathbf{c}$ is the reference point and $\gamma$ controls how quickly similarity decays. A larger $\gamma$ creates a narrower region of high similarity.
 
-**4.5) Transformation Pipelines**
-* Processing steps can be chained together using `Pipeline` or `make_pipeline`.
-* Pipelines can be nested together using `ColumnTransformer` -> apply transformations on selected columns.
+![Handwritten Gaussian radial basis function sketch showing high similarity near the reference point and decay with distance.](/images/notes/hands-on-ml/end-to-end-project/gaussian-rbf.png)
 
----
+These features can help when membership near a particular mode is related to the target.
 
-### SELECT & TRAIN A MODEL
-* Better evaluation using Cross-Validation.
-* Split the training set into $k$ non-overlapping subsets (folds).
-* Trains & evaluates $k$ times, picking a different fold for evaluation each time & using the remaining $k-1$ folds for training.
-* Shortlist a few promising models.
+The **target** can also be transformed. `TransformedTargetRegressor` combines a target transformation with inverse transformation of predictions.
 
----
+### Build custom transformers
 
-### FINE-TUNE YOUR MODEL
-* **Grid Search:** `GridSearchCV` is used to automate the evaluation of hyperparameter combinations.
-* **Randomized Search:** `RandomizedSearchCV`, used when hyperparameter search space is large or continuous as it scales to any number of iterations.
-* **Analyze & Evaluate:** Inspect feature importances & error patterns -> go back to preprocessing step.
-* Perform bias analysis to ensure the model remains fair across different subsets.
-* The final tuned system is evaluated once on the test set (can have higher loss as the model learns from validation sets). Can check confidence interval.
-* **Prelaunch:** create reports, presentations, clean code, define environments....
+- Use `FunctionTransformer` to wrap a transformation function.
+- For a custom transformer class, implement `fit()` and `transform()`.
+- Inherit from `TransformerMixin` to obtain `fit_transform()`.
+- Inherit from `BaseEstimator` for parameter handling and integration with Scikit-Learn tools.
 
----
+### Assemble transformation pipelines
 
-### Launch, MONITOR & maintain
-* **Save the model:** models & cross-validation scores are saved (can use `joblib`).
-* **Deployment:** The model is prepared for production & typically deployed to a production environment (e.g., via a REST API).
-* **Monitoring & MLOps:** System must be monitored for data drift & stale inputs. Retraining pipelines should be automated using scripts that regularly collect new data, obtain human-rated labels, & evaluate updated models before re-deployment....
+Use `Pipeline` or `make_pipeline` to chain processing steps. Use `ColumnTransformer` to apply different transformations to selected columns, such as numerical and categorical attributes.
+
+Combining preprocessing and the estimator in a pipeline keeps their fitting and application together, including during cross-validation.
+
+## 5. Select and train a model
+
+Use **cross-validation** to compare models more reliably than a single validation split.
+
+In $k$-fold cross-validation:
+
+1. Divide the training set into $k$ non-overlapping folds.
+2. Train and evaluate $k$ times, holding out a different fold each time.
+3. Fit on the remaining $k-1$ folds and evaluate on the held-out fold.
+4. Compare validation scores and shortlist promising models.
+
+![Ten-fold cross-validation diagram with each split holding out a different blue validation fold while the remaining yellow folds are used for training.](/images/notes/hands-on-ml/end-to-end-project/cross-validation.png)
+
+*Each observation serves as validation data once in a complete pass through the folds.*
+
+## 6. Fine-tune the model
+
+### Search hyperparameters
+
+- **Grid search:** `GridSearchCV` evaluates the specified combinations of hyperparameter values using cross-validation.
+- **Randomized search:** `RandomizedSearchCV` samples hyperparameter configurations. The iteration count controls the search budget, which is useful for large or continuous search spaces.
+
+### Analyze errors and evaluate the final system
+
+Inspect feature importances and error patterns. These can suggest changes to feature engineering, preprocessing, or model choice. Compare performance across relevant subsets to identify uneven errors or potential bias.
+
+Once the system and hyperparameters are selected, evaluate the final tuned system **once on the held-out test set**. Its score may be worse than the selected validation score because repeated model selection can overfit validation results. A confidence interval can help express uncertainty in the performance estimate.
+
+Before launch, prepare reports and presentations, clean up the code, and record the execution environment.
+
+## 7. Launch, monitor, and maintain
+
+- **Save the system:** Persist the fitted model, its preprocessing steps, and evaluation results. `joblib` can be used for serialization.
+- **Deploy:** Integrate the system into production, for example through a REST API.
+- **Monitor:** Check model performance, data drift, and stale or invalid inputs.
+- **Retrain:** Automate collection of new data and labels, including human ratings when needed. Evaluate updated models before redeployment.
+
+Deployment begins an ongoing cycle of monitoring, evaluation, and maintenance.
