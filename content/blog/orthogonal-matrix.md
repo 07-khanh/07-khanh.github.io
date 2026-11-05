@@ -1,7 +1,7 @@
 ---
 title: "Orthogonal Matrix"
 date: "2026-08-25"
-description: "Orthogonal Matrix Explanation"
+description: "Orthogonal and orthonormal vectors, the geometry of orthogonal matrices, and their role in machine learning."
 ---
 
 # Orthogonal Matrices

@@ -1,13 +1,72 @@
 {
-  "title": "Hands-On Machine Learning with Scikit-Learn, Keras & TensorFlow",
+  "title": "Hands-On Machine Learning with Scikit-Learn and Pytorch",
   "author": "Aurélien Géron",
-  "description": "My derivations, intuition, and code experiments while studying this comprehensive machine learning textbook.",
+  "description": "My notes while studying this comprehensive machine learning textbook.",
   "chapters": [
-    { "id": 1, "slug": "chapter-01", "title": "The Machine Learning Landscape", "hasNotes": false },
-    { "id": 2, "slug": "chapter-02", "title": "End-to-End Machine Learning Project", "hasNotes": true },
-    { "id": 3, "slug": "chapter-03", "title": "Classification", "hasNotes": true },
-    { "id": 4, "slug": "chapter-04", "title": "Training Models", "hasNotes": false },
-    { "id": 5, "slug": "chapter-05", "title": "Decision Trees", "hasNotes": false },
-    { "id": 6, "slug": "chapter-06", "title": "Ensemble Learning and Random Forests", "hasNotes": true }
+    {
+      "id": 1,
+      "slug": "chapter-01",
+      "title": "The Machine Learning Landscape"
+    },
+    {
+      "id": 2,
+      "slug": "chapter-02",
+      "title": "End-to-End Machine Learning Project"
+    },
+    {
+      "id": 3,
+      "slug": "chapter-03",
+      "title": "Classification"
+    },
+    {
+      "id": 4,
+      "slug": "chapter-04",
+      "title": "Training Models"
+    },
+    {
+      "id": 5,
+      "slug": "chapter-05",
+      "title": "Decision Trees"
+    },
+    {
+      "id": 6,
+      "slug": "chapter-06",
+      "title": "Ensemble Learning and Random Forests"
+    },
+    {
+      "id": 7,
+      "slug": "chapter-07",
+      "title": "Dimensionality Reduction"
+    },
+    {
+      "id": 8,
+      "slug": "chapter-08",
+      "title": "Unsupervised Learning Techniques"
+    },
+    {
+      "id": 9,
+      "slug": "chapter-09",
+      "title": "Introduction to Artificial Neural Networks"
+    },
+    {
+      "id": 10,
+      "slug": "chapter-10",
+      "title": "Building Neural Networks with PyTorch"
+    },
+    {
+      "id": 11,
+      "slug": "chapter-11",
+      "title": "Training Deep Neural Networks"
+    },
+    {
+      "id": 12,
+      "slug": "chapter-12",
+      "title": "Deep Computer Vision Using Convolutional Neural Networks"
+    },
+    {
+      "id": 13,
+      "slug": "chapter-13",
+      "title": "Processing Sequences Using RNNs and CNNs"
+    }
   ]
 }

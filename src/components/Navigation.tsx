@@ -1,16 +1,29 @@
+'use client';
+
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { site } from '@/lib/site';
+
+const links = [
+  { href: '/', label: 'About' },
+  { href: '/projects', label: 'Projects' },
+  { href: '/blog', label: 'Writing' },
+  { href: '/notes', label: 'Notes' },
+];
 
 export function Navigation() {
+  const pathname = usePathname();
   return (
-    <nav className="max-w-3xl mx-auto px-6 py-8 flex justify-between items-center font-sans w-full">
-      <Link href="/" className="font-bold text-lg tracking-tight text-gray-900 hover:text-amber-600 transition-colors">
-        Library.
-      </Link>
-      <div className="flex gap-6 text-sm font-medium text-gray-600">
-        <Link href="/blog" className="hover:text-gray-900 transition-colors">Blog</Link>
-        <Link href="/notes" className="hover:text-gray-900 transition-colors">Notes</Link>
-        <Link href="/projects" className="hover:text-gray-900 transition-colors">Projects</Link>
+    <header className="site-header">
+      <div className="shell header-inner">
+        <Link href="/" className="wordmark" aria-label={`${site.name}, home`}>Khanh<span aria-hidden="true">.</span></Link>
+        <nav aria-label="Main navigation" className="main-nav">
+          {links.map(({ href, label }) => {
+            const active = href === '/' ? pathname === '/' : pathname.startsWith(href);
+            return <Link key={href} href={href} aria-current={active ? 'page' : undefined}>{label}</Link>;
+          })}
+        </nav>
       </div>
-    </nav>
+    </header>
   );
 }

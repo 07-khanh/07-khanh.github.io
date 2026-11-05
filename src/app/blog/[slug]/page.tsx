@@ -1,28 +1,26 @@
-import { getPostBySlug, getPosts } from '@/lib/content';
-import { markdownToHtml } from '@/lib/markdown';
 import { notFound } from 'next/navigation';
-import Link from 'next/link';
+import { Article } from '@/components/Article';
+import { getPostBySlug, getPosts } from '@/lib/content';
+import { pageMetadata } from '@/lib/metadata';
 
-export async function generateStaticParams() {
-  return getPosts().map(p => ({ slug: p.slug }));
+type Props = { params: { slug: string } };
+
+export function generateStaticParams() {
+  return getPosts().map(post => ({ slug: post.slug }));
 }
 
-export default async function BlogPost({ params }: { params: { slug: string } }) {
+export function generateMetadata({ params }: Props) {
   const post = getPostBySlug(params.slug);
   if (!post) notFound();
-  
-  const html = await markdownToHtml(post.content);
-  
-  return (
-    <article className="prose max-w-none font-serif text-[1.125rem]">
-      <nav className="not-prose mb-8">
-        <Link href="/blog" className="text-sm font-sans text-amber-600 hover:underline">&larr; Back to Blog</Link>
-      </nav>
-      <header className="mb-12 not-prose border-b border-gray-200 pb-8">
-        <time className="text-sm font-sans text-gray-400 font-medium tracking-wide uppercase">{post.meta.date}</time>
-        <h1 className="text-4xl font-sans font-bold text-gray-900 mt-4 leading-tight">{post.meta.title}</h1>
-      </header>
-      <div dangerouslySetInnerHTML={{ __html: html }} />
-    </article>
-  );
+  return pageMetadata(post.meta.title, post.meta.description, `/blog/${params.slug}`, post.meta.date);
+}
+
+export default async function BlogPost({ params }: Props) {
+  const post = getPostBySlug(params.slug);
+  if (!post) notFound();
+  const posts = getPosts();
+  const index = posts.findIndex(item => item.slug === params.slug);
+  const link = (item: typeof posts[number] | undefined) => item ? { href: `/blog/${item.slug}`, title: item.title } : undefined;
+  return <Article {...post.meta} content={post.content} breadcrumbs={[{ href: '/blog', title: 'Writing' }]}
+    previous={link(posts[index + 1])} next={link(posts[index - 1])} />;
 }

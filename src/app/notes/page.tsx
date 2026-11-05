@@ -1,23 +1,25 @@
-import { getBooks } from '@/lib/content';
 import Link from 'next/link';
+import { getBookNotes, getBooks } from '@/lib/content';
+import { pageMetadata } from '@/lib/metadata';
+
+export const metadata = pageMetadata('Study notes', 'Personal derivations, intuition, and code experiments from studying machine learning.', '/notes');
 
 export default function NotesIndex() {
-  const books = getBooks();
   return (
-    <div className="space-y-12">
-      <header className="border-b border-gray-200 pb-8">
-        <h1 className="text-3xl font-sans font-bold text-gray-900">Study Notes</h1>
-        <p className="text-gray-600 mt-2 font-serif">Detailed technical notes from my reading.</p>
+    <>
+      <header className="page-header">
+        <p className="eyebrow">The learning notebook</p>
+        <h1>Study notes</h1>
+        <p>My derivations, intuition, and code experiments from reading. These are personal study notes, collected and refined as I learn.</p>
       </header>
-      <div className="grid gap-6">
-        {books.map(book => (
-          <Link href={`/notes/${book?.slug}`} key={book?.slug} className="block p-8 bg-white border border-gray-200 rounded-2xl shadow-sm hover:border-amber-400 hover:shadow-md transition-all">
-            <h2 className="text-2xl font-sans font-bold text-gray-900">{book?.title}</h2>
-            <p className="text-sm font-sans font-medium text-gray-500 mt-2 uppercase tracking-wide">By {book?.author}</p>
-            <p className="text-gray-600 mt-4 font-serif leading-relaxed">{book?.description}</p>
-          </Link>
-        ))}
-      </div>
-    </div>
+      {getBooks().map(book => (
+        <Link href={`/notes/${book.slug}`} key={book.slug} className="notebook">
+          <span className="eyebrow">{getBookNotes(book.slug).length} notes · Textbook companion</span>
+          <h2 className="mt-3">{book.title} <span aria-hidden="true">↗</span></h2>
+          <p>By {book.author}</p>
+          <p>{book.description}</p>
+        </Link>
+      ))}
+    </>
   );
 }

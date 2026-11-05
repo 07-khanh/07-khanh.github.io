@@ -1,27 +1,26 @@
-import { getPosts } from '@/lib/content';
 import Link from 'next/link';
+import { getPosts } from '@/lib/content';
+import { formatDate } from '@/lib/site';
+import { pageMetadata } from '@/lib/metadata';
+
+export const metadata = pageMetadata('Writing', 'Explanations and reflections on machine learning, mathematics, and building things.', '/blog');
 
 export default function BlogList() {
   const posts = getPosts();
   return (
-    <div className="space-y-12">
-      <header className="border-b border-gray-200 pb-8">
-        <h1 className="text-3xl font-sans font-bold text-gray-900">Blog</h1>
-        <p className="text-gray-600 mt-2 font-serif">Thoughts, tutorials, and articles.</p>
+    <>
+      <header className="page-header">
+        <p className="eyebrow">Ideas, worked through</p>
+        <h1>Writing</h1>
+        <p>Explanations and reflections on machine learning, mathematics, and building things. Writing helps me make sense of what I’m learning.</p>
       </header>
-      <div className="space-y-10">
-        {posts.map(post => (
-          <article key={post.slug} className="group">
-            <Link href={`/blog/${post.slug}`} className="block">
-              <time className="text-sm font-sans text-gray-400 block mb-2">{post.date}</time>
-              <h2 className="text-xl font-sans font-bold text-gray-900 group-hover:text-amber-600 transition-colors">
-                {post.title}
-              </h2>
-              <p className="text-gray-600 mt-2 font-serif leading-relaxed">{post.description}</p>
-            </Link>
-          </article>
-        ))}
-      </div>
-    </div>
+      <div className="entry-list">{posts.map(post => (
+        <article className="writing-entry" key={post.slug}>
+          <time dateTime={post.date}>{formatDate(post.date)}</time>
+          <div><h2 className="font-serif text-2xl font-medium"><Link href={`/blog/${post.slug}`}>{post.title}</Link></h2><p>{post.description}</p></div>
+          <span className="entry-arrow" aria-hidden="true">↗</span>
+        </article>
+      ))}</div>
+    </>
   );
 }
