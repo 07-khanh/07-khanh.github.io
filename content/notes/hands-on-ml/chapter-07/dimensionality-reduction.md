@@ -167,8 +167,6 @@ $$
 
 The automatic density is $\rho=1/\sqrt{n}$. See the [scikit-learn random projection guide](https://scikit-learn.org/stable/modules/random_projection.html) for the matrix constructions.
 
-![Original example of a sparse random projection matrix with three rows, five columns, zeros, and signed nonzero entries of approximately 0.816.](/images/notes/hands-on-ml/dimensionality-reduction/sparse-projection-matrix.png)
-
 The example matrix is:
 
 $$
@@ -249,8 +247,6 @@ $$
 $$
 
 Without a scale constraint, collapsing every point to the same location would trivially minimize the objective. These constraints and the sum-to-one condition follow the [LLE formulation by Saul and Roweis](https://www.jmlr.org/papers/volume4/saul03a/saul03a.pdf).
-
-> **Equation corrections:** The reconstruction weights sum to $1$, not $0$. The embedding objective is not an unconstrained minimization: its normalization prevents a collapsed solution.
 
 Use `sklearn.manifold.LocallyLinearEmbedding`. Standard LLE has computational stages that can grow quadratically with the number of instances, so it may become expensive on large datasets. See the [manifold learning guide](https://scikit-learn.org/stable/modules/manifold.html) for complexity details.
 

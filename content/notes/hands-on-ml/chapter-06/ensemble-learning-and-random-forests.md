@@ -44,7 +44,7 @@ $$
 \binom{N}{j}p^j(1-p)^{N-j}.
 $$
 
-For $N=1000$ and $p=0.51$, this is approximately $0.726$, or $72.6\%$. If ties are counted as heads wins, the probability is about $74.7\%$, close to the original notes' rough $75\%$ figure.
+For $N=1000$ and $p=0.51$, this is approximately $0.726$, or $72.6\%$. If ties are counted as heads wins, the probability is about $74.7\%$.
 
 The same calculation illustrates an idealized ensemble of independent binary classifiers, each correct with probability $0.51$. In practice, models trained on related data usually have correlated errors, so this calculation is an intuition, not an accuracy guarantee.
 
@@ -102,8 +102,6 @@ bag_clf.fit(X_train, y_train)
 - `n_estimators=500`: train 500 trees.
 - `max_samples=100`: draw 100 training instances for each tree, with replacement in this example.
 - `n_jobs=-1`: use the available CPU cores for supported parallel operations.
-
-![Original bagging code screenshot with handwritten annotations identifying the 500 trees, 100 draws per subset, and CPU parallelism.](/images/notes/hands-on-ml/ensemble-learning/bagging-code.png)
 
 ![Decision boundaries from a single tree and a bagged collection of trees, with the original handwritten generalization annotation.](/images/notes/hands-on-ml/ensemble-learning/bagging-boundaries.png)
 
@@ -178,7 +176,7 @@ The feature-sampling default is not the same for both tasks:
 - [`RandomForestClassifier`](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html) defaults to `max_features="sqrt"`, considering roughly $\sqrt{n}$ features per split when there are $n$ input features.
 - [`RandomForestRegressor`](https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html) defaults to `max_features=1.0`, making all features eligible. Smaller values introduce more feature-sampling randomness.
 
-This corrects the original notes' use of the classifier default for forests in general. These features are sampled during node-split searches, rather than selecting just one fixed feature subset for each entire tree.
+These features are sampled during node-split searches, rather than selecting just one fixed feature subset for each entire tree.
 
 ### Extra-trees
 
@@ -259,7 +257,7 @@ $$
 
 ### The learner's amount of say
 
-Using the binary, SAMME-style convention in these notes, the learner's voting weight is:
+Using the binary, SAMME-style convention, the learner's voting weight is:
 
 $$
 \alpha_t=\eta\log\left(\frac{1-r_t}{r_t}\right),

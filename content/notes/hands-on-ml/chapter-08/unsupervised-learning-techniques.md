@@ -121,8 +121,8 @@ This is a useful heuristic, but an elbow may be weak, ambiguous, or absent.
 
 For a point $i$, define:
 
-- $a_i$: its mean distance to the other points in its own cluster.
-- $b_i$: the smallest mean distance to points in any other cluster.
+- $a_i$: its mean distance to the all points in its own cluster (cohesion).
+- $b_i$: the mean distance to all points in the nearest neighboring cluster (separation).
 
 Its **silhouette coefficient** is:
 

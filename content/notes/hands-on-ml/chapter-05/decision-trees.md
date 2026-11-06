@@ -117,7 +117,7 @@ For a feature $j$ and threshold $t$, instances satisfying $x_j\leq t$ go left; t
 
 ### The classification split objective
 
-When using Gini impurity, the split minimizes the sample-weighted impurity of the children:
+CART conducts an exhaustive search across every single feature and every possible split point (threshold) within those features to find the single best split. When using Gini impurity as the metric, the best split is the one that minimizes the sample-weighted impurity of the children:
 
 $$
 J(j,t)
